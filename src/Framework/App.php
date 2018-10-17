@@ -14,7 +14,7 @@ class App
     use RequestHandler;
 
     /**
-     * @var ServerRequestInterface
+     * @var ContainerInterface
      */
     private $container;
 
@@ -26,11 +26,12 @@ class App
 
     public function esketit(Request $request)
     {
+        $klein = $this->container->get(Klein::class);
+        
         foreach($this->modules as $module){
-            $module::registerRoutes($klein);
+            $module::registerRoutes($klein, $request, $this->container);
         }
 
-        $klein->dispatch($request, null, null);
         $this->handleRequest($klein, $request);
         $klein->response()->send();
     }

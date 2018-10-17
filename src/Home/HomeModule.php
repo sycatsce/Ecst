@@ -5,14 +5,21 @@ namespace App\Home;
 use Klein\Klein;
 use League\Container\Container;
 use Framework\Interfaces\ModuleInterface;
+use Psr\Container\ContainerInterface;
+use App\Home\HomeAction;
+use Framework\Http\RequestHandler;
+use Klein\Request;
 
 
 class HomeModule implements ModuleInterface
 {
-    public static function registerRoutes(Klein $klein)
+    public static function registerRoutes(Klein $klein, Request $request, ContainerInterface $container)
     {
-        $klein->respond('GET', '/', function () {
-            return '<h1> Homepage </h1>';
-        });
+        $action = new HomeAction($container, $request);
+        
+        /* Add routes here*/
+        $klein->get('/', [$action, 'invoke']);
+
+        $klein->dispatch($request, null, null);
     }
 }
